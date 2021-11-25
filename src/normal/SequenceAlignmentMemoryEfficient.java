@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SequenceAlignmentMemoryEfficient {
+	public static String outputFileName="output2.txt";
 	public static int[][] OPT;
 	//ACGT error values
 	public static int[][] alpha=new int[][] {	{0,110,48,94},
@@ -188,7 +189,7 @@ public class SequenceAlignmentMemoryEfficient {
 //		memoryEfficientSequenceAligner(inputStrings[0], inputStrings[1]);
 //		String[] answers=divideAndConquerAlignment(inputStrings[0],inputStrings[1]);
 //		System.out.println(getMinimizingIndex(new int[] {1,2,3,4},new int[] {4,7,2,9}));
-		
+		Commons.writeToFile(answer[0], answer[0],Commons.getExecutionTime(), Commons.getMemoryEval(), outputFileName);
 		System.out.println("Time:"+Commons.getExecutionTime()+" ms");
 		System.out.println("Memory:"+Commons.getMemoryEval());
 	}

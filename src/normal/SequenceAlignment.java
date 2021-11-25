@@ -221,7 +221,7 @@ public class SequenceAlignment {
 		String[] inputStrings=Commons.inputStringGenerator(inputFileLocation,j,k);
 		sequenceAligner(inputStrings[0],inputStrings[1]);
 		String[] answers=getSequenceAlignment(inputStrings[0],inputStrings[1]);
-		Commons.writeToFile(answers[0],answers[1],outputFileName);
+		Commons.writeToFile(answers[0],answers[1],Commons.getExecutionTime(),Commons.getMemoryEval(),outputFileName);
 //		System.out.println(OPT[sequences[0].length()][sequences[1].length()]);
 		System.out.println("A: "+answers[0]);
 		System.out.println("B: "+answers[1]);

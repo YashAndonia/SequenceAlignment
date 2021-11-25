@@ -92,7 +92,7 @@ public class Commons {
 		return x.length()<50?x:x.substring(x.length()-51);
 	}
 	
-	public static void writeToFile(String a,String b,String outputFileName) {
+	public static void writeToFile(String a,String b,long executionTime,long executionMemory,String outputFileName) {
 
 	      File myObj = new File(outputFileName);
 	      try {
@@ -110,16 +110,20 @@ public class Commons {
 	    FileWriter myWriter;
 		try {
 			myWriter = new FileWriter(outputFileName);
-			myWriter.write("First 50:\n");
-			myWriter.write("A:\n");
+//			myWriter.write("First 50:\n");
+//			myWriter.write("A:\n");
 			myWriter.write(firstFifty(a));
-			myWriter.write("B:\n");
+			myWriter.write(" ");
 			myWriter.write(firstFifty(b));
-			myWriter.write("Last 50:\n");
-			myWriter.write("A:\n");
+			myWriter.write("\n");
+//			myWriter.write("A:\n");
 			myWriter.write(lastFifty(a));
-			myWriter.write("B:\n");
+			myWriter.write(" ");
 			myWriter.write(lastFifty(b));
+			myWriter.write("\n");
+			myWriter.write(String.valueOf(executionTime));
+			myWriter.write("\n");
+			myWriter.write(String.valueOf(executionMemory));
 			myWriter.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
