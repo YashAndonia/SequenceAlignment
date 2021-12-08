@@ -1,1 +1,0 @@
-java normal.SequenceAlignment ../input.txt
