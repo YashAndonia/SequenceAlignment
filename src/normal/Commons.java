@@ -15,19 +15,19 @@ public class Commons {
 		startTime=System.currentTimeMillis();
 	}
 	
-	//time to perform operation in miliseconds
-	public static long getExecutionTime() {
+	//time to perform operation in Seconds
+	public static float getExecutionTime() {
 		endTime=System.currentTimeMillis();
-		return endTime-startTime;
+		return (float) ((endTime-startTime)/1000.0);
 	}
 	
-	//memory consumed by this instance in megaBytes
-	public static long getMemoryEval() {
+	//memory consumed by this instance in KiloBytes
+	public static float getMemoryEval() {
 		Runtime instance=Runtime.getRuntime();
-		return (instance.totalMemory()-instance.freeMemory());
+		return (float) ((instance.totalMemory()-instance.freeMemory())/1024.0);
 	}
 	
-	public static String[] inputStringGenerator(String fileLocation,int j,int k) {
+	public static String[] inputStringGenerator(String fileLocation) {
 		StringBuilder a,b;
 		String baseA,baseB;
 		Queue<Integer> aBreaks=new LinkedList<>();
@@ -42,18 +42,27 @@ public class Commons {
 	        //read base A:
 	        baseA=br.readLine();
 	        
-	        //read positions to insert the other part of string
-	        for(int i=0;i<j;i++) {
-	        	aBreaks.add(Integer.parseInt(br.readLine()));
+	        while(true)
+	        {
+	        	String indexA=br.readLine();//read positions to insert the other part of string
+	        	try {
+	        		
+	        		Integer index=Integer.parseInt(indexA);
+	        		aBreaks.add(index);
+	        	}
+	        	catch (Exception e) {
+	        		baseB=indexA;
+	        		break;
+				}
 	        }
-
-	        //read base B:
-	        baseB=br.readLine();
-
-	        //read positions to insert the other part of string
-	        for(int i=0;i<k;i++) {
-	        	bBreaks.add(Integer.parseInt(br.readLine()));
+	        String indexB=br.readLine();
+	        while(indexB!= null)
+	        {
+	        	bBreaks.add(Integer.parseInt(indexB));
+	        	indexB=br.readLine();
+	        	
 	        }
+	   
 
 	        //close the reader of the file
 	        br.close();
@@ -64,7 +73,7 @@ public class Commons {
 	        	a.insert(startPos+1,baseA);
 	        	baseA=a.toString();
 	        }
-	        System.out.println(a.toString());
+//	        System.out.println(a.toString());
 	        
 	        b=new StringBuilder(baseB);
 	        while(!bBreaks.isEmpty()) {
@@ -72,7 +81,7 @@ public class Commons {
 	        	b.insert(startPos+1,baseB);
 	        	baseB=b.toString();
 	        }
-	        System.out.println(b.toString());
+//	        System.out.println(b.toString());
 	        return new String[] {a.toString(),b.toString()};
 	        
 		} catch (Error | IOException e) {
@@ -89,15 +98,15 @@ public class Commons {
 	}
 	
 	public static String lastFifty(String x) {
-		return x.length()<50?x:x.substring(x.length()-51);
+		return x.length()<50?x:x.substring(x.length()-50);
 	}
 	
-	public static void writeToFile(String a,String b,long executionTime,long executionMemory,String outputFileName) {
+	public static void writeToFile(String a,String b,float executionTime,float executionMemory,String outputFileName) {
 
 	      File myObj = new File(outputFileName);
 	      try {
 			if (myObj.createNewFile()) {
-			    System.out.println("File created: " + myObj.getName());
+//			    System.out.println("File created: " + myObj.getName());
 			  } else {
 //			    System.out.println("File already exists.");
 			  }
@@ -114,12 +123,13 @@ public class Commons {
 //			myWriter.write("A:\n");
 			myWriter.write(firstFifty(a));
 			myWriter.write(" ");
-			myWriter.write(firstFifty(b));
-			myWriter.write("\n");
-//			myWriter.write("A:\n");
 			myWriter.write(lastFifty(a));
+			myWriter.write("\n");
+			myWriter.write(firstFifty(b));
 			myWriter.write(" ");
 			myWriter.write(lastFifty(b));
+//			myWriter.write("A:\n");
+
 			myWriter.write("\n");
 			myWriter.write(String.valueOf(executionTime));
 			myWriter.write("\n");

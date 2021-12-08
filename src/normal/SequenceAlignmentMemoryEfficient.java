@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SequenceAlignmentMemoryEfficient {
-	public static String outputFileName="output2.txt";
-	public static int[][] OPT;
+	public static String outputFileName="efficient_output_";
 	//ACGT error values
 	public static int[][] alpha=new int[][] {	{0,110,48,94},
 												{110,0,118,48},
@@ -14,6 +13,8 @@ public class SequenceAlignmentMemoryEfficient {
 											};
 
 	public static int gapPenalty=30;
+	public static long memoryUsed=0;
+	public static boolean flag=true;
 
 	//mapping character(ACGT) to index to use in alphas
 	public static HashMap<Character,Integer> hm;
@@ -23,7 +24,7 @@ public class SequenceAlignmentMemoryEfficient {
 		int bLength=b.length();
 		int minValue;
 		int[] ans=new int[aLength+1];
-		OPT=new int[aLength+1][2];
+		int[][] OPT=new int[aLength+1][2];
 		
 		//base case setup:
 		for(int i=0;i<=aLength;i++) {
@@ -74,11 +75,11 @@ public class SequenceAlignmentMemoryEfficient {
 	}
 
 	public static void divideAndConquerAlignment(String a,String b,ArrayList<Integer[]> ans) {
-		System.out.println("here with "+a+" and "+b+" and ans:");
-		for(Integer[]x:ans) {
-			System.out.println(x[0]+" "+x[1]);
-		}
-		
+//		System.out.println("here with "+a+" and "+b+" and ans:");
+//		for(Integer[]x:ans) {
+//			System.out.println(x[0]+" "+x[1]);
+//		}
+
 		if(a.length()==1&&b.length()==1) {
 			
 		}
@@ -96,13 +97,18 @@ public class SequenceAlignmentMemoryEfficient {
 		int[] rightReverseCombination=memoryEfficientSequenceAligner(sb.reverse().toString(),new StringBuilder(b.substring(b.length()/2)).reverse().toString());
 		int q=getMinimizingIndex(leftCombination,rightReverseCombination);
 		ans.add(new Integer[] {q,n/2});
+		
 
 		divideAndConquerAlignment(a.substring(0,q), b.substring(0,n/2), ans);
 		divideAndConquerAlignment(a.substring(q,m), b.substring(n/2,n), ans);
 	}
 
 	public static String[] divideAndConquerAlignment2(String a,String b) {
-		System.out.println("We are here with Strings "+a+" "+b);
+
+		long init=0;
+		if(flag) init=Runtime.getRuntime().freeMemory();
+		
+//		System.out.println("We are here with Strings "+a+" "+b);
 		if(a.length()<2||b.length()<2) {
 			SequenceAlignment.initialize();
 			SequenceAlignment.sequenceAligner(a, b);
@@ -152,7 +158,12 @@ public class SequenceAlignmentMemoryEfficient {
 		int[] rightReverseCombination=memoryEfficientSequenceAligner(sb.reverse().toString(),new StringBuilder(b.substring(b.length()/2)).reverse().toString());
 		int q=getMinimizingIndex(leftCombination,rightReverseCombination);
 		
-		System.out.println("We have q as "+q);
+		if(flag)
+		{
+				flag=false;
+				memoryUsed=init-Runtime.getRuntime().freeMemory();
+		}
+//		System.out.println("We have q as "+q);
 		String[] leftAns=divideAndConquerAlignment2(a.substring(0,q), b.substring(0,n/2));
 		String[] rightAns=divideAndConquerAlignment2(a.substring(q,m), b.substring(n/2,n));
 
@@ -174,14 +185,10 @@ public class SequenceAlignmentMemoryEfficient {
 		initialize();
 		// TODO Auto-generated method stub
 		String inputFileLocation=args[0];
-		int j=Integer.parseInt(args[1]);
-		int k=Integer.parseInt(args[2]);
-		String[] inputStrings=Commons.inputStringGenerator(inputFileLocation,j,k);
-		ArrayList<Integer[]> pathToAns=new ArrayList<>();
+		String[] inputStrings=Commons.inputStringGenerator(inputFileLocation);
 //		divideAndConquerAlignment(inputStrings[0], inputStrings[1], pathToAns);
-		String[] answer=divideAndConquerAlignment2(inputStrings[0], inputStrings[1]);
-		System.out.println("A: "+answer[0]);
-		System.out.println("B: "+answer[1]);
+		outputFileName+=String.valueOf(inputStrings[0].length()*inputStrings[1].length())+".txt";
+		String[] answers=divideAndConquerAlignment2(inputStrings[0], inputStrings[1]);
 //		for(Integer[] path:pathToAns) {
 //			System.out.print(path[0]+" "+path[1]);
 //			System.out.println("");
@@ -189,9 +196,14 @@ public class SequenceAlignmentMemoryEfficient {
 //		memoryEfficientSequenceAligner(inputStrings[0], inputStrings[1]);
 //		String[] answers=divideAndConquerAlignment(inputStrings[0],inputStrings[1]);
 //		System.out.println(getMinimizingIndex(new int[] {1,2,3,4},new int[] {4,7,2,9}));
-		Commons.writeToFile(answer[0], answer[0],Commons.getExecutionTime(), Commons.getMemoryEval(), outputFileName);
-		System.out.println("Time:"+Commons.getExecutionTime()+" ms");
-		System.out.println("Memory:"+Commons.getMemoryEval());
+		float execTime=Commons.getExecutionTime();
+		float memoryCost=(float) (memoryUsed/1024.0);
+		Commons.writeToFile(answers[0],answers[1],execTime,memoryCost,"output.txt");
+//		System.out.println(OPT[sequences[0].length()][sequences[1].length()]);
+//		System.out.println("A: "+answers[0]);
+//		System.out.println("B: "+answers[1]);
+//		System.out.println("Exec time:"+execTime+" s");
+//		System.out.println("Memory consumed:"+memoryCost+" KB");
 	}
 
 }

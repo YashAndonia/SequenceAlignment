@@ -15,7 +15,7 @@ public class SequenceAlignment {
 
 	public static int[][]OPT;
 	public static int gapPenalty=30;
-	public static String outputFileName="output.txt";
+	public static String outputFileName="output_";
 	
 
 	//mapping character(ACGT) to index to use in alphas
@@ -35,7 +35,7 @@ public class SequenceAlignment {
 		int minValue;
 		
 		OPT=new int[aLength+1][bLength+1];
-		
+		outputFileName+=String.valueOf(aLength*bLength)+".txt";
 		//filling base values in OPT
 		for(int i=0;i<=aLength;i++) {
 			OPT[i][0]=i*gapPenalty;
@@ -53,9 +53,9 @@ public class SequenceAlignment {
 						gapPenalty+OPT[i-1][j]
 						);
 				OPT[i][j]=Math.min(minValue, gapPenalty+OPT[i][j-1]);
-				System.out.print(OPT[i][j]+" ");
+//				System.out.print(OPT[i][j]+" ");
 			}
-			System.out.println();
+//			System.out.println();
 		}
 		
 	}
@@ -131,18 +131,18 @@ public class SequenceAlignment {
 				sequenceB.append(b.charAt(j-1));
 				i--;
 				j--;
-			}
-			else if(OPT[i][j]==OPT[i-1][j]+gapPenalty) {
-				//match char at i in A with a gap in B
-				sequenceA.append(a.charAt(i-1));
-				sequenceB.append('_');
-				i--;
-			}
-			else {
+			}		
+			else if(OPT[i][j]==OPT[i][j-1]+gapPenalty) {
 				//match char at j in B with a gap in A
 				sequenceB.append(b.charAt(j-1));
 				sequenceA.append('_');
 				j--;
+			}
+			else if(OPT[i][j]==OPT[i-1][j]+gapPenalty) {
+				//match char at j in B with a gap in A
+				sequenceA.append(a.charAt(i-1));
+				sequenceB.append('_');
+				i--;
 			}
 		}
 		while(i>0) {
@@ -156,7 +156,6 @@ public class SequenceAlignment {
 			sequenceA.append('_');
 			j--;
 		}
-		System.out.println("I: "+i+" j: "+j);
 		return new String[] {sequenceA.reverse().toString(),sequenceB.reverse().toString()};
 	}
 //	
@@ -212,21 +211,22 @@ public class SequenceAlignment {
 	}
 	
 	public static void main(String[] args) {
+		float initMemory=Commons.getMemoryEval();
 		Commons.startTimer();
 		initialize();
 		// TODO Auto-generated method stub
 		String inputFileLocation=args[0];
-		int j=Integer.parseInt(args[1]);
-		int k=Integer.parseInt(args[2]);
-		String[] inputStrings=Commons.inputStringGenerator(inputFileLocation,j,k);
+		String[] inputStrings=Commons.inputStringGenerator(inputFileLocation);
 		sequenceAligner(inputStrings[0],inputStrings[1]);
 		String[] answers=getSequenceAlignment(inputStrings[0],inputStrings[1]);
-		Commons.writeToFile(answers[0],answers[1],Commons.getExecutionTime(),Commons.getMemoryEval(),outputFileName);
+		float execTime=Commons.getExecutionTime();
+		float memoryUsed=Commons.getMemoryEval()-initMemory;
+		Commons.writeToFile(answers[0],answers[1],execTime,memoryUsed,"output.txt");
 //		System.out.println(OPT[sequences[0].length()][sequences[1].length()]);
-		System.out.println("A: "+answers[0]);
-		System.out.println("B: "+answers[1]);
-		System.out.println("Exec time:"+Commons.getExecutionTime()+" ms");
-		System.out.println("Memory consumed:"+Commons.getMemoryEval()+" bits");
+//		System.out.println("A: "+answers[0]);
+//		System.out.println("B: "+answers[1]);
+//		System.out.println("Exec time:"+execTime+" s");
+//		System.out.println("Memory consumed:"+memoryUsed+" KB");
 	}
 
 }
